@@ -5,12 +5,13 @@ import os
 
 app = Flask(__name__)
 
-# CONFIGURAÇÕES
+# OPENAI 1.x: usando chave do tipo sk-proj
+openai.api_key = "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"
+
+# Z-API config
 ZAPI_INSTANCE = "3E01E904D77EE0E2921F8E66062CE0C1"
 ZAPI_TOKEN = "948E3B5FF7F285EC974430DC"
 ZAPI_URL = f"https://api.z-api.io/instances/{ZAPI_INSTANCE}/token/{ZAPI_TOKEN}/send-text"
-
-openai.api_key = "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"
 
 PROMPT_BASE = """
 Você é o Patrick Maya, corretor de imóveis de alto padrão em Balneário Camboriú. Responda como se fosse ele, com um tom simpático, direto e com autoridade. Utilize expressões como "meu caro", "vamos nessa", "te mostro agora mesmo". Seja cordial, mas ágil. Quando apropriado, convide o cliente para agendar uma visita ou pedir mais opções de imóveis.
@@ -29,16 +30,16 @@ def webhook():
             print("❌ Campos ausentes.")
             return jsonify({"erro": "Faltam dados"}), 400
 
-        full_prompt = PROMPT_BASE + f"\n\nMensagem do cliente: {message}\nResposta:"
-
-        response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=full_prompt,
-            temperature=0.8,
-            max_tokens=200
+        # novo formato para ChatCompletion na OpenAI >= 1.x
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": PROMPT_BASE},
+                {"role": "user", "content": message}
+            ]
         )
 
-        reply = response.choices[0].text.strip()
+        reply = response.choices[0].message.content.strip()
 
         payload = {
             "phone": phone,
