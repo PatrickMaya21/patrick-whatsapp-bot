@@ -1,12 +1,16 @@
 from flask import Flask, request, jsonify
 import requests
-import openai
+from openai import OpenAI
 import os
 
 app = Flask(__name__)
 
-# OPENAI 1.x: usando chave do tipo sk-proj
-openai.api_key = "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"
+# Inicializa OpenAI client com chave de projeto
+client = OpenAI(
+    api_key="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",  # sua chave completa aqui
+    project="proj_i1Y0K2NoboXG8Y4Hv7In37ow",
+    organization="org-F1n6tuKSl9rtuumbAednXnW1"
+)
 
 # Z-API config
 ZAPI_INSTANCE = "3E01E904D77EE0E2921F8E66062CE0C1"
@@ -30,8 +34,8 @@ def webhook():
             print("❌ Campos ausentes.")
             return jsonify({"erro": "Faltam dados"}), 400
 
-        # novo formato para ChatCompletion na OpenAI >= 1.x
-        response = openai.chat.completions.create(
+        # Chat completion com nova API
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": PROMPT_BASE},
