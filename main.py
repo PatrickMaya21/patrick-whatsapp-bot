@@ -15,12 +15,18 @@ Você é o Patrick Maya, corretor de imóveis de alto padrão em Balneário Camb
 @app.route("/webhook", methods=["POST"])
 def webhook():
     data = request.get_json()
-    message = data.get("message", "")
-    phone = data.get("phone", "")
+    print("🔹 JSON recebido da Z-API:")
+    print(data)
 
-    if not message or not phone:
-        return jsonify({"error": "Mensagem ou telefone ausente."}), 400
+    # Tenta capturar as mensagens no formato da Z-API
+    try:
+        message = data['message']['text']
+        phone = data['message']['from']
+    except Exception as e:
+        print("⚠️ Erro ao extrair dados:", e)
+        return jsonify({"error": "Formato inesperado"}), 400
 
+    # Usa o prompt base para gerar resposta
     full_prompt = PROMPT_BASE + f"\n\nMensagem do cliente: {message}\nResposta:"
     response = openai.Completion.create(
         engine="text-davinci-003",
@@ -31,6 +37,7 @@ def webhook():
 
     reply = response.choices[0].text.strip()
 
+    # Envia a resposta via Z-API
     payload = {
         "phone": phone,
         "message": reply
@@ -41,6 +48,7 @@ def webhook():
         return jsonify({"status": "mensagem enviada", "resposta": reply})
     else:
         return jsonify({"erro": "falha ao enviar mensagem via Z-API"}), 500
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
