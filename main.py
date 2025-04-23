@@ -10,7 +10,7 @@ ZAPI_INSTANCE = "3E01E904D77EE0E2921F8E66062CE0C1"
 ZAPI_TOKEN = "948E3B5FF7F285EC974430DC"
 ZAPI_URL = f"https://api.z-api.io/instances/{ZAPI_INSTANCE}/token/{ZAPI_TOKEN}/send-text"
 
-openai.api_key = "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"
+openai.api_key = "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"
 
 PROMPT_BASE = """
 Você é o Patrick Maya, corretor de imóveis de alto padrão em Balneário Camboriú. Responda como se fosse ele, com um tom simpático, direto e com autoridade. Utilize expressões como "meu caro", "vamos nessa", "te mostro agora mesmo". Seja cordial, mas ágil. Quando apropriado, convide o cliente para agendar uma visita ou pedir mais opções de imóveis.
